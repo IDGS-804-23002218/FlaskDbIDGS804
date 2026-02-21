@@ -1,43 +1,20 @@
 {% extends "layout.html" %}
 {% block container %}
+{% import "_macros.html" as macros %}
 
-<div class="w-full max-w-sm bg-neutral-primary-soft p-6 border border-default rounded-base shadow-xs">
-
-    <div>
-        <h5 class="text-2xl text-heading font-bold tracking-tight mb-4">
-            Detalles del Alumno
+<div class="relative bg-neutral-primary-soft max-w-xs w-full p-6 border border-default rounded-base shadow-xs">
+    <div class="flex flex-col items-center">
+        <img class="w-24 h-24 mb-6 rounded-full" src="{{ url_for('static', filename='img/usuario.png') }}" alt="Foto de {{nombre}}"/>
+        <h5 class="mb-0.5 text-xl font-semibold tracking-tight text-heading">
+            {{nombre}} {{apellidos}}
         </h5>
-
-        <div class="space-y-3">
-            <p class="text-lg">
-                <span class="font-semibold">ID:</span>
-                {{ alum.id }}
-            </p>
-
-            <p class="text-lg">
-                <span class="font-semibold">Nombre:</span>
-                {{ alum.nombre }}
-            </p>
-
-            <p class="text-lg">
-                <span class="font-semibold">Apellido Paterno:</span>
-                {{ alum.apaterno }}
-            </p>
-
-            <p class="text-lg">
-                <span class="font-semibold">Email:</span>
-                {{ alum.email }}
-            </p>
-        </div>
-
-        <div class="mt-6">
-            <a href="index"
-               class="inline-block text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-4 py-2">
-                Volver
-            </a>
+        <span class="text-sm text-body">{{email}}</span>
+        <div class="flex mt-4 md:mt-6 gap-4">
+            <button type="button" onclick="location.href='index'" class="inline-flex items-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
+                Regresar
+            </button>
         </div>
     </div>
-
 </div>
 
 {% endblock %}
