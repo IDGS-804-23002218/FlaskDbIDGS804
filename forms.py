@@ -20,3 +20,4 @@ class UserForm(FlaskForm):
     telefono = StringField("Teléfono", {
         validators.DataRequired(message="Ingrese un teléfono valido")
     })
+
