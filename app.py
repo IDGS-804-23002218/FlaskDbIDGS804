@@ -5,6 +5,7 @@ from config import DevelopmentConfig
 from flask_migrate import Migrate
 from flask import g
 from maestros.routes import maestros
+from cursos.routes import cursos
 import forms
 
 from models import db
@@ -13,6 +14,7 @@ from models import Alumnos
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 app.register_blueprint(maestros)
+app.register_blueprint(cursos)
 db.init_app(app)
 Migrate=Migrate(app, db)
 csrf=CSRFProtect()
@@ -26,7 +28,7 @@ def alumnos():
         db.session.add(alum)
         db.session.commit()
         return redirect(url_for('index'))
-    return render_template("alumnos.html", form=create_form)
+    return render_template("alumnos/alumnos.html", form=create_form)
 
 @app.route("/detalles", methods=["GET"])
 def detalles():
@@ -36,7 +38,7 @@ def detalles():
         nombre=alum1.nombre
         apellidos=alum1.apellidos
         email=alum1.email
-        return render_template("detalles.html", id=id, nombre=nombre, apellidos=apellidos, email=email)
+        return render_template("alumnos/detalles.html", id=id, nombre=nombre, apellidos=apellidos, email=email)
 
 @app.route("/modificar", methods=['GET', 'POST'])
 def modificar():
@@ -61,7 +63,7 @@ def modificar():
         db.session.add(alum1)
         db.session.commit()
         return redirect(url_for('index'))
-    return render_template("modificar.html", form=create_form)
+    return render_template("alumnos/modificar.html", form=create_form)
 
 @app.route("/eliminar", methods=['GET', 'POST'])
 def eliminar():
@@ -80,18 +82,18 @@ def eliminar():
         db.session.delete(alum1)
         db.session.commit()
         return redirect(url_for('index'))
-    return render_template("eliminar.html", form=create_form)
+    return render_template("alumnos/eliminar.html", form=create_form)
 
 @app.errorhandler(404)
 def page_not_fount(e):
     return render_template("404.html"),404
 
 @app.route("/", methods=['GET', 'POST'])
-@app.route("/index")
+@app.route("/indexAlum")
 def index():
     create_form = forms.UserForm(request.form)
     alumno = Alumnos.query.all()
-    return render_template("index.html", form=create_form, alumno=alumno)
+    return render_template("alumnos/index.html", form=create_form, alumno=alumno)
 
 if __name__ == '__main__':
     with app.app_context():
