@@ -1,7 +1,3 @@
-import os
-
-from sqlalchemy import create_engine
-
 class Config(object):
     SECRET_KEY ="ClaveSecreta"
     SESSION_COOKIE_SECURE = False

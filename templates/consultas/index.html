@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+{% block container %}
+
+<div class="py-32 w-full max-w-4xl mx-auto px-4">
+
+  <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-8">Consultas</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+
+    <!-- Buscar por curso -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5"/>
+        </svg>
+        Alumnos por curso
+      </h2>
+      <form method="GET" action="/consultas">
+        <input type="hidden" name="alumno_id" value="">
+        <select name="curso_id" onchange="this.form.submit()"
+          class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white mb-4">
+          <option value="">-- Selecciona un curso --</option>
+          {% for curso in cursos %}
+            <option value="{{ curso.id }}" {% if curso_seleccionado and curso_seleccionado.id == curso.id %}selected{% endif %}>
+              {{ curso.nombre }}
+            </option>
+          {% endfor %}
+        </select>
+      </form>
+
+      {% if curso_seleccionado %}
+        {% if alumnos_en_curso %}
+          <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">{{ alumnos_en_curso|length }} alumno(s) inscritos en <strong>{{ curso_seleccionado.nombre }}</strong></p>
+          <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th class="px-3 py-2">Nombre</th>
+                <th class="px-3 py-2">Apellidos</th>
+                <th class="px-3 py-2">Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for alumno in alumnos_en_curso %}
+              <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td class="px-3 py-2">{{ alumno.nombre }}</td>
+                <td class="px-3 py-2">{{ alumno.apellidos }}</td>
+                <td class="px-3 py-2">{{ alumno.email }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <!-- Buscar por alumno -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-8 9a7 7 0 1 1 14 0H7Z"/>
+        </svg>
+        Cursos por alumno
+      </h2>
+      <form method="GET" action="/consultas">
+        <input type="hidden" name="curso_id" value="">
+        <select name="alumno_id" onchange="this.form.submit()"
+          class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white mb-4">
+          <option value="">-- Selecciona un alumno --</option>
+          {% for alumno in alumnos %}
+            <option value="{{ alumno.id }}" {% if alumno_seleccionado and alumno_seleccionado.id == alumno.id %}selected{% endif %}>
+              {{ alumno.nombre }} {{ alumno.apellidos }}
+            </option>
+          {% endfor %}
+        </select>
+      </form>
+
+      {% if alumno_seleccionado %}
+        {% if cursos_de_alumno %}
+          <p class="text-xs text-gray-500 dark:text-gray-400 mb-2"><strong>{{ alumno_seleccionado.nombre }} {{ alumno_seleccionado.apellidos }}</strong> está inscrito en {{ cursos_de_alumno|length }} curso(s)</p>
+          <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th class="px-3 py-2">Curso</th>
+                <th class="px-3 py-2">Maestro</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for curso in cursos_de_alumno %}
+              <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td class="px-3 py-2">{{ curso.nombre }}</td>
+                <td class="px-3 py-2">
+                  {% if curso.maestro %}
+                    {{ curso.maestro.nombre }} {{ curso.maestro.apellidos }}
+                  {% else %}
+                    Sin maestro
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

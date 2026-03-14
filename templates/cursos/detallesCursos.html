@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block container %}
+
+<div class="relative bg-neutral-primary-soft max-w-sm w-full p-6 border border-default rounded-base shadow-xs">
+    <div class="flex flex-col items-center">
+        <img class="w-24 h-24 mb-6 rounded-full" src="{{ url_for('static', filename='img/usuario.png') }}" alt="Foto del curso"/>
+        <h5 class="mb-0.5 text-xl font-semibold tracking-tight text-heading">
+            {{ curso.nombre }}
+        </h5>
+        <span class="text-sm text-body">{{ curso.descripcion }}</span>
+        <span class="text-xs text-gray-500 mt-1">
+            Maestro: {{ curso.maestro.nombre }} {{ curso.maestro.apellidos }}
+        </span>
+
+        <!-- Alumnos inscritos -->
+        <div class="w-full mt-6">
+            <h6 class="text-sm font-semibold text-heading mb-2">
+                Alumnos inscritos ({{ curso.alumnos|length }})
+            </h6>
+            {% if curso.alumnos %}
+                <ul class="divide-y divide-default w-full">
+                    {% for alumno in curso.alumnos %}
+                        <li class="py-2 text-sm text-body flex justify-between">
+                            <span>{{ alumno.nombre }} {{ alumno.apellidos }}</span>
+                            <span class="text-xs text-gray-400">{{ alumno.email }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-sm text-gray-400 text-center">No hay alumnos inscritos aún.</p>
+            {% endif %}
+        </div>
+
+        <div class="flex mt-6 gap-4">
+            <button type="button" onclick="location.href='/cursos'" 
+                class="inline-flex items-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
+                Regresar
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

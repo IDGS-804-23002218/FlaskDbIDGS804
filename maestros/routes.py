@@ -1,26 +1,13 @@
-from . import maestros
-from flask import Flask, render_template, request, redirect, url_for
-from flask import flash
-from flask_wtf.csrf import CSRFProtect
-from config import DevelopmentConfig
-from flask import g
+from maestros import maestros
+from flask import render_template, request, redirect, url_for, flash
 import forms
-from flask_migrate import Migrate
-from maestros.routes import maestros, maestros
+from models import db, Maestros
 
-from models import db
-from models import Alumnos, Maestros
-
-@maestros.route('/perfil/<nombre>')
-def perfil(nombre):
-    return f"Perfil de {nombre}"
-
-@maestros.route("/maestros", methods=["GET","POST"])
-@maestros.route("/index")
-def index():
-    create_form=forms.MaestroForm(request.form)
-    maestros=Maestros.query.all()
-    return render_template("maestros/listadoMaes.html", form=create_form, maestros=maestros)
+@maestros.route("/maestros", methods=["GET", "POST"])
+def listadoMaes():
+    create_form = forms.MaestroForm(request.form)
+    lista = Maestros.query.all()
+    return render_template("maestros/listadoMaes.html", form=create_form, maestros=lista)
 
 @maestros.route("/maestros/agregar", methods=["GET", "POST"])
 def agregar():
@@ -34,19 +21,14 @@ def agregar():
         )
         db.session.add(mae)
         db.session.commit()
-        return redirect(url_for('maestros.index'))
+        return redirect(url_for('maestros.listadoMaes'))
     return render_template("maestros/agregarMaes.html", form=create_form)
 
 @maestros.route("/maestros/detalles", methods=["GET"])
 def detalles():
-    if request.method == "GET":
-        matricula=request.args.get('matricula')
-        mae=db.session.query(Maestros).filter(Maestros.matricula==matricula).first() 
-        nombre=mae.nombre
-        apellidos=mae.apellidos
-        especialidad=mae.especialidad
-        email=mae.email
-        return render_template("maestros/detallesMaes.html", matricula=matricula, nombre=nombre, apellidos=apellidos, especialidad=especialidad, email=email)
+    matricula = request.args.get('matricula')
+    mae = db.session.query(Maestros).filter(Maestros.matricula == matricula).first()
+    return render_template("maestros/detallesMaes.html", mae=mae)
 
 @maestros.route("/maestros/modificar", methods=["GET", "POST"])
 def modificar():
@@ -67,7 +49,7 @@ def modificar():
         mae.especialidad = create_form.especialidad.data
         mae.email = create_form.email.data
         db.session.commit()
-        return redirect(url_for('maestros.index'))
+        return redirect(url_for('maestros.listadoMaes'))
     return render_template("maestros/modificarMaes.html", form=create_form)
 
 @maestros.route("/maestros/eliminar", methods=["GET", "POST"])
@@ -83,8 +65,11 @@ def eliminar():
         create_form.email.data = mae.email
     if request.method == "POST":
         matricula = create_form.matricula.data
-        mae = Maestros.query.get(matricula)
+        mae = db.session.get(Maestros, matricula)
+        if mae.cursos:
+            flash(f"No se puede eliminar a {mae.nombre}, tiene {len(mae.cursos)} curso(s) asignado(s).", "error")
+            return redirect(url_for('maestros.listadoMaes'))
         db.session.delete(mae)
         db.session.commit()
-        return redirect(url_for('maestros.index'))
+        return redirect(url_for('maestros.listadoMaes'))
     return render_template("maestros/eliminarMaes.html", form=create_form)
